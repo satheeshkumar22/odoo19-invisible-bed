@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="attributes">
+                <attribute name="invisible">picking_type_code == 'outgoing'</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="button_row_material" string="Raw Material Procured" invisible="states != 'waiting' or picking_type_code != 'outgoing'"  type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_process_start" string="Process Start" invisible="states != 'row_material' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_qc" string="QC" invisible="states not in ('process_start','assigned') or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_packaging" string="Packaging" invisible="states != 'qc' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_out_for_delivery" string="Ready To Dispatch" invisible="states != 'packaging' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_payment_received" string="Payment Received" invisible="states != 'out_for_delivery' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_delivered" string="Delivered" invisible="states != 'payement_received' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_installation" string="Installation" invisible="states != 'delivered' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <button name="button_close" string="Close" invisible="states != 'done' or picking_type_code != 'outgoing'" type="object" groups="stock.group_stock_user" class="oe_highlight"/>
+                <field name="states" widget="statusbar" invisible="picking_type_code != 'outgoing'" statusbar_visible="draft,confirmed,assigned,row_material,process_start,qc,packaging,out_for_delivery,payement_received,delivered,installation,done,close" />
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="team_id" string="Platform"/>
+                <field name='invoice_last_payment'/>
+                <label for="installation_from" string="Installation Date"/>
+                <div class="d-flex">
+                    <field name="installation_from" string="Installation Date" nolabel='1'/>
+                    <span class="o_form_label mx-3" style='font-weight:Bold;'> To </span>
+                    <field name="installation_to" string="To" nolabel='1'/>
+                </div>
+            </xpath>
+        </field>
+        </record>
+        <record id="vpicktree" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="states" optional="show" widget="badge" decoration-success="states == 'done'" decoration-info="states not in ('done', 'cancel')"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name='team_id' string='Platform' optional='show'/>
+                    <field name="date_done" string="Effective Date" optional='show'/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_internal_search" model="ir.ui.view">
+            <field name="name">stock.picking.platform.search</field>
+            <field name="model">stock.picking</field>
+            <field name="mode">extension</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <separator/>
+                    <filter string="Daily" name="daily" domain="['&amp;',('scheduled_date', '&gt;=', (context_today()).strftime('%Y-%m-%d')),('scheduled_date', '&lt;=', (context_today()).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Monthly" name="monthly" domain="[('scheduled_date','&gt;=',(context_today()+relativedelta(months=0)).strftime('%Y-%m-01'))]"/>
+                    <separator/>
+                    <filter string="Effective Date" name='date_done' date="date_done"/>
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <separator/>
+                    <filter string="Platform" name="team_id" domain="[]" context="{'group_by': 'team_id'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

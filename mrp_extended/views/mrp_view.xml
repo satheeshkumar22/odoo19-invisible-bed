@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View: Add delivery_date field -->
+        <record model="ir.ui.view" id="mrp_production_form_view">
+            <field name="name">mrp.production.form.view.delivery</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="delivery_date" invisible="state != 'draft'" readonly="state != 'draft'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Tree View: Add delivery_date field -->
+        <record model="ir.ui.view" id="mrp_production_tree_view">
+            <field name="name">mrp.production.tree.view.delivery</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="delivery_date" widget="date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Search View: Add delivery_date filters -->
+        <record model="ir.ui.view" id="view_mrp_production_filter">
+            <field name="name">mrp.production.select.delivery</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="delivery_date"/>
+                </xpath>
+                <xpath expr="//filter[@name='filter_date_start']" position="after">
+                    <filter name="filter_delivery_date" string="Delivery Date" date="delivery_date"/>
+                </xpath>
+                <xpath expr="//filter[@name='date']" position="after">
+                    <filter string="Delivery Date" name="delivery_date" domain="[]" context="{'group_by': 'delivery_date'}" help="Delivery Date by Month"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

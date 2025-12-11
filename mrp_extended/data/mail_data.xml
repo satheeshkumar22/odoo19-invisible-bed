@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Order Received : -->
+    <data>
+
+        <!--            MO Reminder Notification Template -->
+        <record id="mrp_mo_reminder_mail_template" model="mail.template">
+            <field name="name">MO Reminder Notification</field>
+            <field name="email_from">{{ ctx.get('from_email', '') }}</field>
+            <field name="email_to">{{ ctx.get('email_to', '') }}</field>
+            <field name="subject">{{ object.name }}</field>
+            <field name="model_id" ref="mrp.model_mrp_production"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Team,</p>
+                    <br/>
+                    <p>Please find below Planned MOs that need to be executed tomorrow.</p>
+                    <br/>
+                    <t t-set="mo_ids" t-value="mo_ids"/>
+                    <t t-foreach="mo_ids" t-as="name">
+                        <p>
+                            <t t-out="name"/>
+                        </p>
+                    </t>
+                    <br/>
+                    <br/>
+                </div>
+            </field>
+        </record>
+
+        <!--         Shipment Status Plan Notification Template -->
+        <record id="shipment_status_plan_reminder_mail_template" model="mail.template">
+            <field name="name">Shipment Status Plan Notification</field>
+            <field name="email_from">{{ ctx.get('from_email', '') }}</field>
+            <field name="email_to">{{ ctx.get('email_to', '') }}</field>
+            <field name="subject">Shipment status plan Mail Notification</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Dispatch Team,</p>
+                    <br/>
+                    <p>Please find below the current week delivery plan</p>
+                    <br/>
+                    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <th style="padding: 8px; text-align: left;">Dispatch</th>
+                                <th style="padding: 8px; text-align: left;">Sales No</th>
+                                <th style="padding: 8px; text-align: left;">Scheduled Date</th>
+                                <th style="padding: 8px; text-align: left;">Shipment Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="shipment_ids" t-value="shipment_ids"/>
+                            <t t-foreach="shipment_ids" t-as="picking">
+                                <tr>
+                                    <td style="padding: 8px;">
+                                        <t t-out="picking.dispatch"/>
+                                    </td>
+                                    <td style="padding: 8px;">
+                                        <t t-out="picking.sales_no"/>
+                                    </td>
+                                    <td style="padding: 8px;">
+                                        <t t-out="picking.scheduled_date"/>
+                                    </td>
+                                    <td style="padding: 8px;">
+                                        <t t-out="picking.status"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                </div>
+            </field>
+        </record>
+
+        <!--         MO Confirm Template -->
+        <record id="mail_template_mo_confirm" model="mail.template">
+            <field name="name">Mo Confirm</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to', '') }}</field>
+            <field name="subject">Raw Material Procured (Ref {{ object.name or 'n/a' }})</field>
+            <field name="model_id" ref="mrp.model_mrp_production"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello<t t-out="customer"/>,
+                        <br/>
+                        <br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        We are glad to inform you that your order is in production and we will update you soon with the
+                        next progress.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

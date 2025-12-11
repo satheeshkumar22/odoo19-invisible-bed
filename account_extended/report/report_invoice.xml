@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="inherited_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div id="extra_informations" class="row mt32 mb32">
+                <div class="col-auto col-3 mw-100 mb-2" t-if="o.e_way_bill" name="e_way_bill">
+                    <strong>E-Way Bill:</strong>
+                    <p class="m-0" t-field="o.e_way_bill"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" t-if="o.transporter_id" name="transporter_id">
+                    <strong>Transporter ID:</strong>
+                    <p class="m-0" t-field="o.transporter_id"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" t-if="o.vehicle_no" name="vehicle_no">
+                    <strong>Vehicle No:</strong>
+                    <p class="m-0" t-field="o.vehicle_no"/>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[hasclass('clearfix')]/div/div" position="before">
+            <div class="col-3">
+                <img t-if="o.env.company.upi_code_image" t-att-src="image_data_uri(o.env.company.upi_code_image)"
+                     style="margin-left:50px;padding-bottom:10px;padding-top:10px" alt="UPI Code"/>
+            </div>
+        </xpath>
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+                <h5>Bill To</h5>
+                <address t-field="o.partner_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                <div t-if="o.partner_id.vat" class="mt16">
+                    <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label"
+                       id="inv_tax_id_label"/>
+                    <t t-else="">Tax ID</t>:
+                    <span t-field="o.partner_id.vat"/>
+                </div>
+                <div class="mt16">
+                    Phone: <span t-field="o.partner_id.phone"/>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//address" position="before">
+            <t t-if="o.partner_shipping_id">
+                <t t-set="information_block">
+                    <div name="shipping_address_block">
+                        <h5>Ship To</h5>
+                        <div t-field="o.partner_shipping_id" t-options="{'widget': 'contact', 'fields': ['address', 'name'], 'no_marker': True}"/>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[hasclass('clearfix')]/div/div[2]" position="attributes">
+            <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto
+            </attribute>
+        </xpath>
+
+        <xpath expr="//t[@name='account_invoice_line_accountable']/td" position="replace">
+            <td name="account_invoice_line_name">
+                <span t-field="line.product_id.display_name" t-options="{'widget': 'text'}"/>
+            </td>
+        </xpath>
+
+        <xpath expr="//div[hasclass('page')]//div[hasclass('clearfix')]" position="after">
+            <!-- Extract tax groups from tax_totals dictionary -->
+            <t t-set="tax_groups_list" t-value="o.tax_totals.get('groups_by_subtotal', {}).get('Untaxed Amount', []) if o.tax_totals else []"/>
+
+            <div class="table-responsive-lg">
+                <table class="table table-sm o_main_table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 0%;">HSN/SAC</th>
+                            <th scope="col" style="width: 0%;">Taxable Amount</th>
+                            <t t-foreach="tax_groups_list" t-as="tax_group">
+                                <th scope="col" style="width: 40%;margin-left:10%">
+                                    <t t-esc="tax_group['tax_group_name']"/>
+                                </th>
+                            </t>
+                            <th scope="col" style="width: 0%;">Total Tax Amt</th>
+                        </tr>
+                    </thead>
+                    <tbody class="invoice_tbody">
+                        <!-- First tr for the tax columns -->
+                        <tr class="border-black">
+                            <td/>
+                            <td/>
+                            <t t-foreach="tax_groups_list" t-as="tax_group">
+                                <td>
+                                    <div class="row justify-content-start ">
+                                        <div class="col-4 ">
+                                            Rate
+                                        </div>
+                                        <div class="col-5 ">
+                                            Amount
+                                        </div>
+                                    </div>
+                                </td>
+                            </t>
+                            <td/>
+                        </tr>
+
+                        <!-- Group by HSN code -->
+                        <t t-foreach="list(set(o.invoice_line_ids.mapped('product_id.l10n_in_hsn_code')))" t-as="hsn">
+                            <t t-set="current_invoice_line"
+                               t-value="o.invoice_line_ids.filtered(lambda line: line.product_id.l10n_in_hsn_code == hsn)"/>
+                            <tr class="border-black">
+                                <td>
+                                    <t t-esc="hsn"/>
+                                </td>
+                                <td>
+                                    <span t-esc="sum(current_invoice_line.mapped('price_subtotal'))"  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+
+                                <t t-foreach="tax_groups_list" t-as="tax_group">
+                                    <t t-set="child_taxes" t-value="current_invoice_line.mapped('tax_ids').filtered(lambda line_tax: line_tax.amount_type == 'group').mapped('children_tax_ids')"/>
+                                    <t t-set="all_taxes_without_group" t-value="current_invoice_line.mapped('tax_ids').filtered(lambda line_tax: line_tax.amount_type != 'group')"/>
+                                    <t t-set="current_tax" t-value="(all_taxes_without_group + child_taxes).filtered(lambda child_tax: child_tax.tax_group_id.name == tax_group['tax_group_name'])"/>
+                                    <t t-set="total_base" t-value="sum(current_invoice_line.filtered(lambda line: (tax_group['tax_group_name'] in line.tax_ids.mapped('tax_group_id.name')) or (tax_group['tax_group_name'] in line.tax_ids.mapped('children_tax_ids.tax_group_id.name'))).mapped('price_subtotal'))"/>
+                                    <t t-if="current_tax" t-set="tax_calc" t-value="current_tax[0].compute_all(total_base)"/>
+
+                                    <td>
+                                        <div class="row justify-content-start ">
+                                            <div class="col-4 ">
+                                                <t t-if="current_tax" t-esc="current_tax[0].amount"/>%
+                                            </div>
+                                            <div class="col-5 ">
+                                                <t t-if="current_tax">
+                                                    <t t-if="not tax_calc['taxes'][0]['price_include']" t-esc="round((sum(list(map(lambda x: x.price_unit*x.quantity, current_invoice_line))) * current_tax[0].amount)/100, 2)"  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                    <t t-if="tax_calc['taxes'][0]['price_include']" t-esc="round((tax_calc['total_included'] * current_tax[0].amount)/100, 2)"  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </t>
+
+                                <td/>
+                            </tr>
+                        </t>
+
+                        <!-- Total row -->
+                        <tr class="border-black">
+                            <td/>
+                            <td>Total</td>
+                            <t t-foreach="tax_groups_list" t-as="tax_group">
+                                <td>
+                                    <div class="row justify-content-start ">
+                                        <div class="col-4 ">
+                                        </div>
+                                        <div class="col-5 ">
+                                            <!-- Use tax_group_amount from tax_totals dictionary -->
+                                            <t t-esc="tax_group['tax_group_amount']" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                </td>
+                            </t>
+                            <td>
+                                <!-- Total tax amount from tax_totals -->
+                                <t t-set="total_tax_amount" t-value="o.tax_totals.get('amount_total', 0) - o.tax_totals.get('amount_untaxed', 0) if o.tax_totals else o.amount_tax"/>
+                                <t t-esc="total_tax_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

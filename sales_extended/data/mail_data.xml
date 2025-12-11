@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Order Received : -->
+    <data>
+        <record id="mail_template_order_received_new" model="mail.template">
+            <field name="name">Order Received</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to', '') }}</field>
+            <field name="subject">Order Received (Ref {{ object.name or 'n/a' }})</field>
+            <field name="model_id" ref="custom_sale_mrp.model_sale_order"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello<t t-out="customer"/>,
+                        <br/>
+                        <br/>
+                        Thanks for your Valuable order !!
+                        <br/>
+                        We have received your order and forwarding the details to the production team. We will keep you
+                        updated on the next progress.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+        <record id="mfg_order_mail_template" model="mail.template">
+            <field name="name">leave create Notification</field>
+            <field name="email_from">{{ ctx.get('from_email', '') }}</field>
+            <field name="email_to">{{ object.partner_id.email or '' }}</field>
+            <field name="subject">{{ object.name }}</field>
+            <field name="model_id" ref="sale_mrp.model_sale_order"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear<t t-out="object.partner_id.name or ''"/>,
+                    </p>
+                    <br/>
+                    <p>Your ordered product
+                        <t t-out="mrp_product_name"/>
+                        is under production.
+                    </p>
+                    <br/>
+                    <p>We will update you once it is dispatched from our warehouse.</p>
+                    <br/>Thanks!
+                    <br/>
+                    <br/>
+                </div>
+            </field>
+        </record>
+
+
+        <!-- SFG/FG Product On Hand Qty Template -->
+        <record id="sfg_product_on_hand_qty_mail_template" model="mail.template">
+            <field name="name">Sfg or Fg product Qty Template</field>
+            <field name="email_from">{{ ctx.get('from_email', '') }}</field>
+            <field name="email_to">{{ ctx.get('email_to', '') }}</field>
+            <field name="subject">SFG And FG product On Hand Qty Notification</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Admin,</p>
+                    <br/>
+                    <p>Here is a list of SFG and FG Product On Hand QTY</p>
+                    <br/>
+                    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <th style="padding: 8px; text-align: left;">Product</th>
+                                <th style="padding: 8px; text-align: left;">On Hand QTY</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="product_ids" t-value="product_ids"/>
+                            <t t-foreach="product_ids" t-as="product">
+                                <p><t t-out="product.name"/></p>
+                                <p><t t-out="product.on_hand_qty"/></p>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                </div>
+            </field>
+        </record>
+
+        <!-- Deadline Delivery Date Template -->
+        <record id="mail_template_delivery_date" model="mail.template">
+            <field name="name">Deadline Delivery Date</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">smitha@invisiblebed.com</field>
+            <field name="email_cc">dispatch@invisiblebed.com,production@invisiblebed.com</field>
+            <field name="subject">Deadline Delivery Date (Ref {{ object.name or 'n/a' }})</field>
+            <field name="model_id" ref="sale_mrp.model_sale_order"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello,
+                        <br/>
+                        <br/>
+                        Deadline Delivery Date for <t t-out="object.name"/> / <t t-out="mrp_orders"/> is revised to <t t-out="devliery_date"/>
+                        <br/>
+                        Please take a note of it and prioritize production order accordingly.
+                        <br/>
+                        Admin,
+                        <br/>
+                        Thank you!
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+
+</odoo>

@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data noupdate="0">
+        <!-- 1. Order Received : -->
+        <record id="mail_template_order_received" model="mail.template">
+            <field name="name">Order Received</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Order Received (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Thanks for your Valuable order !!
+                        <br/>
+                        We have received your order and forwarding the details to the production team. We will keep you updated on the next progress.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Raw Material Procurred -->
+        <record id="mail_template_raw_material_procured" model="mail.template">
+            <field name="name">Raw Material Procured</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Raw Material Procured (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        We are glad to inform you that your order is in production and we will update you soon with the next progress.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Ready To dispatch: -->
+        <record id="mail_template_ready_to_dispatch" model="mail.template">
+            <field name="name">Ready To dispatch</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Ready To dispatch (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        We are very much Happy and glad to inform you that your order is ready to dispatch and our dispatch team will connect with you back shortly.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Payment Received  -->
+        <record id="mail_template_payment_received" model="mail.template">
+            <field name="name">Payment Received </field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Payment Received (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        We acknowledge the receipt of the balance payment of (Rs. <t t-out="ctx.get('amount')"/>). We thank you once again for the valuable order.
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Installation Planned -->
+        <record id="mail_template_installation_planned" model="mail.template">
+            <field name="name">Installation Planned</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Installation Planned (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        This is to acknowledge that your order installation is been planned By (<t t-out="ctx.get('date_plan')"/>).
+                        <br/>
+                        Thanks &amp; Regards,
+                        <br/>
+                        Team Invisible bed
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Order Closed -->
+        <record id="mail_template_order_closed" model="mail.template">
+            <field name="name">Order Closed</field>
+            <field name="email_from">prashanth@invisiblebed.com</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="subject">Order Closed (Ref {{object.name or 'n/a' }})</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="ctx.get('customer')"/>,<br/><br/>
+                        Greetings from Invisible bed!!
+                        <br/>
+                        We thank you for your valuable order. We confirm that your order delivery and installation is been completed on (<t t-out="ctx.get('date_install')"/>) and forward your details to our service team.
+                        <br/>
+                        For any service-related query kindly connect with us at 18005470209 or mail us at support@invisiblebed.com.
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_install_pending_request" model="mail.template">
+            <field name="name">Installation Pending Request</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="subject">Installation Pending (Ref ${ctx.get('origin')})</field>
+            <field name="partner_to">${3}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear Team,<br/><br/>
+                        You still have pending installation request for sale order (${ctx.get('origin')})
+                        <br/>
+                        Please expedite and perform installation on priority.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        </data>
+</odoo>
