@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record model="ir.ui.view" id="view_quotation_tree_with_onboarding_extend">
+		<field name="name">view.sale.order.extend.tree</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='amount_total']" position="before">
+				<field name="advance_payment"/>
+				<field name="remaining_payment"/>
+            </xpath>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_order_form">
+		<field name="name">view.order.form.extends.to.add.advance.payment.button</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+		<field name="arch" type="xml">
+			<header position="inside">
+				<button name="action_register_sale_advance_payment"
+					string=" Advance Payment" class="oe_highlight" type="object"
+					invisible="state not in ('draft') or is_paid"/>
+			</header>
+			<xpath expr="//sheet/div[@class='oe_button_box']"
+				position="inside">
+				<button name="action_view_payment" type="object"
+					class="oe_stat_button" icon="fa-money"
+					invisible="payment_count == 0">
+					<field name="payment_count" widget="statinfo"
+						string="Advance Payments" />
+				</button>
+			</xpath>
+			<xpath expr="//field[@name='date_order']" position="after">
+				<field name="is_paid" invisible="1"/>
+			</xpath>
+			<xpath expr="//sheet/notebook/page[@name='other_information']" position="after">
+				<page string="Advance Payment">
+					<field name="payment_ids">
+						<list>
+							<field name="date"/>
+							<field name="name"/>
+							<field name="journal_id"/>
+							<field name="partner_id"/>
+							<field name="amount_signed" string="Amount In Base"/>
+							<field name="amount"/>
+							<field name="currency_id"/>
+							<field name="state"/>
+						</list>
+					</field>
+				</page>
+			</xpath>
+		</field>
+	</record>
+
+</odoo>

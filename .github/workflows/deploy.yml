@@ -1,0 +1,35 @@
+name: Deploy to Ubuntu Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Ubuntu
+        uses: appleboy/ssh-action@v1.2.2
+
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+
+          script: |
+            cd /opt/demo/demo-cicd-2026/odoo19-invisible-bed
+
+            echo "Updating repository..."
+
+            git fetch origin
+
+            git reset --hard origin/main
+
+            echo "Deployment Completed Successfully"

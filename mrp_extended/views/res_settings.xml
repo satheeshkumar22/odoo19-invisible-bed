@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- MRP Settings Extension -->
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.inherit.mrp</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="45"/>
+            <field name="inherit_id" ref="mrp.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//app[@name='mrp']" position="inside">
+                    <h2>MO reminder Mail Setting</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-lg-6 col-12 o_setting_box" id="mo_mail_setting">
+                            <div class="o_setting_left_pane">
+                                <field name="is_mo_mail" widget="upgrade_boolean"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="is_mo_mail" string="Mail Send Before Scheduled day"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-12 o_setting_box" id="mo_mail_days_setting" invisible="not is_mo_mail">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="mo_mail_days" string="Send Mail before planned Days:"/>
+                                <field name="mo_mail_days"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Stock Settings Extension -->
+        <record id="view_res_config_settings_form_inherit_stock" model="ir.ui.view">
+            <field name="name">res.config.settings.inherit.stock</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//app[@name='stock']" position="inside">
+                    <h2 class="mt32">Shipment Status Plan Notification</h2>
+                    <div class="row mt16 o_settings_container" id="shipment_mail_setting_container">
+                        <div class="col-lg-6 col-12 o_setting_box" id="stock_daily_mail_setting">
+                            <div class="o_setting_left_pane">
+                                <field name="is_check_daily_shipment_mail" widget="upgrade_boolean"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="is_check_daily_shipment_mail" string="Shipment Daily Status Plan Notification"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-12 o_setting_box" id="stock_mail_setting">
+                            <div class="o_setting_left_pane">
+                                <field name="is_check_shipment_mail" widget="upgrade_boolean"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="is_check_shipment_mail" string="Shipment Weekly Status Plan Notification"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="shipment_status_notification" invisible="not is_check_shipment_mail and not is_check_daily_shipment_mail">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="user_ids_shipment" string="Select Users: "/>
+                                <field name="user_ids_shipment" widget="many2many_tags"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="shipment_status_weekday" invisible="not is_check_shipment_mail">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="week_day_shipment_mail" string="Select Weekday: "/>
+                                <field name="week_day_shipment_mail"/>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="mt32">Mail Notification for SFG,FG Product On Hand QTY</h2>
+                    <div class="row mt16 o_settings_container" id="product_qty_setting_container">
+                        <div class="col-lg-6 col-12 o_setting_box" id="product_qty_mail_setting">
+                            <div class="o_setting_left_pane">
+                                <field name="is_check_product_qty" widget="upgrade_boolean"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="is_check_product_qty" string="Send Mail of On Hand QTY"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="product_qty_notification" invisible="not is_check_product_qty">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="user_ids_product_qty" string="Users For Product QTY Mail: "/>
+                                <field name="user_ids_product_qty" widget="many2many_tags"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="product_qty_notification_weekday" invisible="not is_check_product_qty">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="week_day_product_qty" string="Weekday For Product QTY Mail: "/>
+                                <field name="week_day_product_qty"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.base.hsn.summary</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@id='invoicing_settings']" position="inside">
+                    <div class="col-12 col-lg-6 o_setting_box" id="default_advance_setting">
+                        <div class="o_setting_left_pane">
+                        </div>
+                        <div class="o_setting_right_pane" id="default_advance_setting_upi">
+                            <label for="upi_code_image"/>
+                            <div class="text-muted">
+                                UPI Code
+                            </div>
+                            <div class="mt16">
+                                <field name="upi_code_image"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

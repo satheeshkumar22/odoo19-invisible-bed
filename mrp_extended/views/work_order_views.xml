@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+
+        <record id="mrp_production_workorder_tree_editable_view" model="ir.ui.view">
+            <field name="name">mrp.production.work.order.tree.editable.inherit.mrp.operator</field>
+            <field name="model">mrp.workorder</field>
+            <field name="inherit_id" ref="mrp.mrp_production_workorder_tree_editable_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='workcenter_id']" position="after">
+                    <field name="operator_ids" widget="many2many_tags"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="mrp_workcenter_view" model="ir.ui.view">
+            <field name="name">mrp.workcenter.form.operator</field>
+            <field name="model">mrp.workcenter</field>
+            <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="operator_ids" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_mrp_operator_tree">
+            <field name="name">Operators</field>
+            <field name="res_model">mrp.operator</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+                id="menu_mrp_operator"
+                groups="mrp.group_mrp_routings"
+                parent="mrp.menu_mrp_configuration"
+                action="action_open_mrp_operator_tree"
+                sequence="150"/>
+
+    </data>
+</odoo>
